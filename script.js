@@ -1,6 +1,10 @@
 var classroom = {
-  students: {}
+  students: JSON.parse(localStorage.getItem('students')) || {}
 };
+
+function saveData() {
+  localStorage.setItem('students', JSON.stringify(classroom.students));
+}
 
 function submitRole() {
   var role = document.getElementById('role').value;
@@ -40,68 +44,5 @@ function submitTeacher() {
       </form>
     `;
   } else {
-    alert("잘못된 아이디입니다. 프로그램을 종료합니다.");
-  }
-}
+    alert("잘못된 아이디입니다. 프로그램을
 
-function submitStudent() {
-  var studentName = document.getElementById('studentName').value;
-  var status = getStudentStatus(studentName);
-  var message = `현재 ${status.name}은(는) ${status.points}포인트이며 ${status.level}레벨입니다.`;
-  if (status.level !== '브론즈') {
-    message += '\n축하합니다.';
-  }
-  alert(message);
-}
-
-function addPoints() {
-  var studentName = document.getElementById('studentName').value;
-  var points = parseInt(document.getElementById('points').value);
-  var status = addStudentPoints(studentName, points);
-  var message = `현재 ${status.name}은(는) ${status.points}포인트이며 ${status.level}레벨입니다.`;
-  if (status.message) {
-    message += '\n' + status.message;
-  }
-  alert(message);
-}
-
-function addStudentPoints(name, points) {
-  if (!classroom.students[name]) {
-    classroom.students[name] = {
-      points: 0,
-      level: '브론즈'
-    };
-  }
-  var student = classroom.students[name];
-  student.points += points;
-  var previousLevel = student.level;
-  updateLevel(student);
-  var message = '';
-  if (student.level !== previousLevel) {
-    message = '축하합니다. 승급하셨습니다.';
-  }
-  return {name: name, points: student.points, level: student.level, message: message};
-}
-
-function getStudentStatus(name) {
-  if (classroom.students[name]) {
-    var student = classroom.students[name];
-    return {name: name, points: student.points, level: student.level};
-  } else {
-    return {name: name, points: 0, level: '브론즈'};
-  }
-}
-
-function updateLevel(student) {
-  if (student.points >= 30) {
-    student.level = '마스터';
-  } else if (student.points >= 20) {
-    student.level = '다이아몬드';
-  } else if (student.points >= 10) {
-    student.level = '골드';
-  } else if (student.points >= 5) {
-    student.level = '실버';
-  } else {
-    student.level = '브론즈';
-  }
-}
